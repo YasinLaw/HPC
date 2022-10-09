@@ -1,0 +1,4 @@
+CompileFlags:
+	Add:
+		- "-std=c++20"
+		- "--include-directory=/opt/homebrew/Cellar/open-mpi/4.1.4_2/include"

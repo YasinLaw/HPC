@@ -1,0 +1,11 @@
+mpic++ main.cc -std=c++17
+mpirun --hostfile hostfile -c 1 ./a.out
+and we cost 4040975 μs
+mpirun --hostfile hostfile -c 2 ./a.out
+and we cost 2582590 μs
+mpirun --hostfile hostfile -c 4 ./a.out
+and we cost 1697849 μs
+mpirun --hostfile hostfile -c 8 ./a.out
+and we cost 1243167 μs
+# mpirun --hostfile hostfile -c 16 ./a.out
+rm a.out
