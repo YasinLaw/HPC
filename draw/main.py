@@ -9,6 +9,7 @@ plt.plot(x, s, "b", marker='D', markersize=5)
 plt.xlabel("Quantity of Node")
 plt.ylabel("Speedup")
 plt.title("Matrix Multiplication Speedup")
+
 for x1, y1 in zip(x, s):
     plt.text(x1, y1, str(y1), ha='center', va='bottom', fontsize=10)
 #保存图片
