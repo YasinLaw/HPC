@@ -16,19 +16,19 @@ int main(int argc, char* argv[])
 	const int matrix_size = len * len;
 	const int chunk_size = matrix_size / size;
 
-	double* m1;
-	double* m2 = new double[matrix_size];
+	double* a;
+	double* b = new double[matrix_size];
 	double* chunk = new double[chunk_size];
-	double* r;
+	double* results;
 	double result;
-	double* results = new double[chunk_size];
+	double* chunk_results = new double[chunk_size];
 	auto start = std::chrono::steady_clock::now();
 
 	if (rank == 0) 
 	{
 		// initialize the matrix with random floating point number
-		m1 = new double[matrix_size];
-		r = new double[matrix_size];
+		a = new double[matrix_size];
+		results = new double[matrix_size];
 		std::random_device rd;
 		std::mt19937 mt(rd());
 		std::uniform_real_distribution<double> dist(-1.0, 1.0);
@@ -36,15 +36,15 @@ int main(int argc, char* argv[])
 		{
 			for (int j = 0; j < len; j++)
 			{
-				m1[i * len + j] = dist(mt);
-				m2[j * len + i] = dist(mt);
+				a[i * len + j] = dist(mt);
+				b[j * len + i] = dist(mt);
 			}
 		}
 		start = std::chrono::steady_clock::now();
 	}
 
-	MPI_Scatter(m1, chunk_size, MPI_DOUBLE, chunk, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	MPI_Bcast(m2, matrix_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Scatter(a, chunk_size, MPI_DOUBLE, chunk, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Bcast(b, matrix_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	int width = len;
 	int height = len / size;
@@ -57,25 +57,25 @@ int main(int argc, char* argv[])
 			result = 0;
 			for (int k = 0; k < len; k++)
 			{
-				result += chunk[r * len + k] * m2[k * len + c];	
+				result += chunk[r * len + k] * b[k * len + c];	
 			}
-			results[index++] = result;
+			chunk_results[index++] = result;
 		}
 	}
 
-	MPI_Gather(results, chunk_size, MPI_DOUBLE, r + rank * chunk_size, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Gather(chunk_results, chunk_size, MPI_DOUBLE, results + rank * chunk_size, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	if (rank == 0)
 	{
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed = end - start;
 		printf("task costs %lld μs\n", std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count());
-		delete [] m1;
-		delete [] r;
+		delete [] a;
+		delete [] results;
 	}
-	delete [] m2;
+	delete [] b;
 	delete [] chunk;
-	delete [] results;
+	delete [] chunk_results;
 
 	MPI_Finalize();
 	return 0;

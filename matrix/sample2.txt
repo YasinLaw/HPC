@@ -1,11 +1,11 @@
 mpic++ main.cc -std=c++20
 mpirun --hostfile hostfile -c 1 ./a.out
-task costs 43978796 μs
+task costs 4184478 μs
 mpirun --hostfile hostfile -c 2 ./a.out
-task costs 32027749 μs
+task costs 2412705 μs
 mpirun --hostfile hostfile -c 4 ./a.out
-task costs 18850141 μs
+task costs 1422654 μs
 mpirun --hostfile hostfile -c 8 ./a.out
-task costs 18406901 μs
+task costs 1305567 μs
 # mpirun --hostfile hostfile -c 16 ./a.out
 rm a.out

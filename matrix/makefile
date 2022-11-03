@@ -1,7 +1,7 @@
 all: compile run clean
 
 compile: main.cc
-	mpic++ main.cc -std=c++17
+	mpic++ main.cc -std=c++20
 run: ./a.out
 	mpirun --hostfile hostfile -c 1 ./a.out
 	mpirun --hostfile hostfile -c 2 ./a.out
